@@ -12,7 +12,7 @@ class BananaImagine extends InputfieldImage implements ConfigurableModule {
     public static function getModuleInfo() {
         return array(
             'title' => 'Banana Imagine',
-            'version' => 100,
+            'version' => 110,
             'icon' => 'leaf',
             'author' => 'Maxim Alex',
             'summary' => 'Generate AI images directly in your image fields using Google Gemini API.',
@@ -42,12 +42,15 @@ class BananaImagine extends InputfieldImage implements ConfigurableModule {
         $apiKey = $this->bananaApiKey;
         $prompt = $this->wire('input')->post->text('prompt');
         $index  = $this->wire('input')->post->int('index');
+        $pageId = $this->wire('input')->post->int('page_id');
         $model = $this->bananaModel ?: 'gemini-2.5-flash-image'; 
 
         if(!$apiKey) {
             header('Content-Type: application/json');
             die(json_encode(['error' => 'API Key missing.']));
         }
+
+        // System prompt is already included in the user's prompt (pre-filled in the input field)
 
         // Smart Variations: Adds subtle differences for batch results
         $variations = ["", ", cinematic lighting", ", alternative perspective", ", close-up shot"];
@@ -104,11 +107,30 @@ class BananaImagine extends InputfieldImage implements ConfigurableModule {
         $useFields = is_array($this->useField) ? $this->useField : [];
         if(!in_array($inputfield->name, $useFields)) return;
 
+        $page = $inputfield->hasPage;
+        $pageId = $page ? $page->id : 0;
+
+        // Resolve system prompt placeholders to pre-fill the input field
+        $systemPrompt = trim($this->systemPrompt ?? '');
+        $prefillValue = '';
+        if($systemPrompt) {
+            $resolved = $systemPrompt;
+            if($page && $page->id) {
+                $resolved = preg_replace_callback('/%([a-zA-Z0-9_]+)%/', function($matches) use ($page) {
+                    $fieldName = $matches[1];
+                    $value = $page->get($fieldName);
+                    if($value instanceof WireArray) return (string) $value->first();
+                    return $value ? (string) $value : $matches[0];
+                }, $systemPrompt);
+            }
+            $prefillValue = htmlspecialchars($resolved, ENT_QUOTES);
+        }
+
         $markup = "
-        <div class='BananaImagine-container' data-name='{$inputfield->name}' style='margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;'>
+        <div class='BananaImagine-container' data-name='{$inputfield->name}' data-page-id='{$pageId}' style='margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;'>
             <div class='uk-grid-collapse uk-grid' uk-grid>
                 <div class='uk-width-expand@s'>
-                    <input type='text' class='banana-prompt uk-input' placeholder='Describe the image...' style='border-radius: 4px 0 0 4px;'>
+                    <input type='text' class='banana-prompt uk-input' value='{$prefillValue}' placeholder='Describe the image...' style='border-radius: 4px 0 0 4px;'>
                 </div>
                 <div class='uk-width-auto@s'>
                     <select class='banana-num uk-select' style='min-width: 65px; border-radius: 0; border-left: 0; border-right: 0;'>
@@ -167,7 +189,16 @@ class BananaImagine extends InputfieldImage implements ConfigurableModule {
 
     public function getModuleConfigInputfields(array $data) {
         $inputfields = new InputfieldWrapper();
-        
+
+        $f = $this->wire('modules')->get('InputfieldTextarea');
+        $f->name = 'systemPrompt';
+        $f->label = 'System Prompt';
+        $f->description = 'Optional context pre-filled into the prompt field on every page. Use `%fieldname%` placeholders to insert values from the current page (e.g. `%title%`, `%summary%`).';
+        $f->notes = 'Example: "Professional product photo of %title%, studio lighting, white background"';
+        $f->rows = 3;
+        $f->value = $data['systemPrompt'] ?? '';
+        $inputfields->add($f);
+
         $f = $this->wire('modules')->get('InputfieldText');
         $f->name = 'bananaApiKey'; 
         $f->label = 'Google AI API Key';

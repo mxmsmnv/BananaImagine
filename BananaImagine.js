@@ -7,6 +7,7 @@
             const $preview = $container.find('.banana-results-area');
             const prompt = $container.find('.banana-prompt').val();
             const num = parseInt($container.find('.banana-num').val());
+            const pageId = $container.data('page-id') || 0;
 
             if(!prompt) return;
 
@@ -28,7 +29,7 @@
                 $.ajax({
                     url: window.location.href,
                     method: 'POST',
-                    data: { banana_action: 'generate', prompt: prompt, index: i },
+                    data: { banana_action: 'generate', prompt: prompt, index: i, page_id: pageId },
                     success: function(response) {
                         if(response.data && response.data[0]) {
                             const item = response.data[0];

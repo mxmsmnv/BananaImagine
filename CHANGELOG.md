@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.0] - 2026-03-05
+### Added
+- System Prompt field in module settings.
+- `%fieldname%` placeholder support (e.g. `%title%`) resolved from current page fields.
+- System prompt is pre-filled into the prompt input field on every page edit.
+
 ## [1.0.0] - 2026-02-23
 ### Added
 - Initial 1.0.0 Release.
