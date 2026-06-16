@@ -4,7 +4,7 @@ namespace ProcessWire;
 /**
  * BananaImagine: AI Image Generation for ProcessWire via Google Gemini
  * * @version 1.0.0
- * @author Maxim Alex
+ * @author Maxim Semenov <maxim@smnv.org> (smnv.org)
  * @link https://github.com/mxmsmnv/BananaImagine
  */
 class BananaImagine extends InputfieldImage implements ConfigurableModule {
@@ -14,7 +14,8 @@ class BananaImagine extends InputfieldImage implements ConfigurableModule {
             'title' => 'Banana Imagine',
             'version' => 110,
             'icon' => 'leaf',
-            'author' => 'Maxim Alex',
+            'author' => 'Maxim Semenov',
+            'href'     => 'https://smnv.org',
             'summary' => 'Generate AI images directly in your image fields using Google Gemini API.',
             'autoload' => 'template=admin',
             'requires' => 'ProcessWire>=3.0.0'

@@ -2,8 +2,12 @@
 
 **Version:** 1.1.0  
 **Repository:** [github.com/mxmsmnv/BananaImagine](https://github.com/mxmsmnv/BananaImagine)  
+
+**Author:** Maxim Semenov  
+**Website:** [smnv.org](https://smnv.org)  
+**Email:** [maxim@smnv.org](mailto:maxim@smnv.org)
+
 If this project helps your work, consider supporting future development: [GitHub Sponsors](https://github.com/sponsors/mxmsmnv) or [smnv.org/sponsor](https://smnv.org/sponsor/).  
-**Author:** Maxim Alex  
 **License:** MIT
 
 Banana Imagine is a ProcessWire module that enables high-quality AI image generation within your `Pageimage` fields using the **Google Gemini** API.
