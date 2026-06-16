@@ -2,6 +2,7 @@
 
 **Version:** 1.1.0  
 **Repository:** [github.com/mxmsmnv/BananaImagine](https://github.com/mxmsmnv/BananaImagine)  
+If this project helps your work, consider supporting future development: [GitHub Sponsors](https://github.com/sponsors/mxmsmnv) or [smnv.org/sponsor](https://smnv.org/sponsor/).  
 **Author:** Maxim Alex  
 **License:** MIT
 
