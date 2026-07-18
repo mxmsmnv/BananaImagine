@@ -3,10 +3,13 @@
 ## [1.1.1] - 2026-07-18
 ### Added
 - Gemini 3.1 Flash Image (Nano Banana 2) and Gemini 3.1 Flash Lite Image (Nano Banana 2 Lite) model options.
+- Olivia-compatible `AGENTS.md` with site-building guidance, request contracts and safety boundaries.
+- New hand-drawn editorial illustration for the project README.
 
 ### Changed
 - Set Gemini 3.1 Flash Image as the default image-generation model.
 - Replaced the Gemini 3 Pro Image preview identifier with the stable `gemini-3-pro-image` identifier while preserving compatibility with existing settings.
+- Reworked the README using the same concise documentation structure as Vox.
 
 ### Fixed
 - Display the Banana Imagine interface for enabled image fields inside RepeaterMatrix items.
