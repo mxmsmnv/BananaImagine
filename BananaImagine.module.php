@@ -12,7 +12,7 @@ class BananaImagine extends InputfieldImage implements ConfigurableModule {
     public static function getModuleInfo() {
         return array(
             'title' => 'Banana Imagine',
-            'version' => 110,
+            'version' => 111,
             'icon' => 'leaf',
             'author' => 'Maxim Semenov',
             'href'     => 'https://smnv.org',
@@ -44,7 +44,8 @@ class BananaImagine extends InputfieldImage implements ConfigurableModule {
         $prompt = $this->wire('input')->post->text('prompt');
         $index  = $this->wire('input')->post->int('index');
         $pageId = $this->wire('input')->post->int('page_id');
-        $model = $this->bananaModel ?: 'gemini-2.5-flash-image'; 
+        $model = $this->bananaModel ?: 'gemini-3.1-flash-image';
+        if($model === 'gemini-3-pro-image-preview') $model = 'gemini-3-pro-image';
 
         if(!$apiKey) {
             header('Content-Type: application/json');
@@ -106,7 +107,8 @@ class BananaImagine extends InputfieldImage implements ConfigurableModule {
     protected function renderBananaInterface(HookEvent $event) {
         $inputfield = $event->object;
         $useFields = is_array($this->useField) ? $this->useField : [];
-        if(!in_array($inputfield->name, $useFields)) return;
+        $fieldName = preg_replace('/_repeater\d+$/', '', $inputfield->name);
+        if(!in_array($fieldName, $useFields)) return;
 
         $page = $inputfield->hasPage;
         $pageId = $page ? $page->id : 0;
@@ -211,10 +213,14 @@ class BananaImagine extends InputfieldImage implements ConfigurableModule {
         $f->name = 'bananaModel';
         $f->label = 'Model';
         $f->addOptions([
-            'gemini-2.5-flash-image' => 'Gemini 2.5 Flash Image',
-            'gemini-3-pro-image-preview' => 'Gemini 3 Pro Image (Preview)'
+            'gemini-3.1-flash-image' => 'Gemini 3.1 Flash Image (Nano Banana 2)',
+            'gemini-3.1-flash-lite-image' => 'Gemini 3.1 Flash Lite Image (Nano Banana 2 Lite)',
+            'gemini-3-pro-image' => 'Gemini 3 Pro Image (Nano Banana Pro)',
+            'gemini-2.5-flash-image' => 'Gemini 2.5 Flash Image (Nano Banana)'
         ]);
-        $f->value = $data['bananaModel'] ?? 'gemini-2.5-flash-image';
+        $selectedModel = $data['bananaModel'] ?? 'gemini-3.1-flash-image';
+        if($selectedModel === 'gemini-3-pro-image-preview') $selectedModel = 'gemini-3-pro-image';
+        $f->value = $selectedModel;
         $inputfields->add($f);
 
         $f = $this->wire('modules')->get('InputfieldAsmSelect');
